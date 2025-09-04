@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-md-6">
+        <h1 class="display-4 mb-4">VisitED</h1>
+        <p class="lead">An innovative solution for tracking student attendance using facial recognition technology.</p>
+        <p>This system helps universities reduce absenteeism and improve academic performance by automatically recording student attendance.</p>
+        
+        <div class="mt-5">
+            {% if session.get('user_id') %}
+                <a href="{{ url_for('student_dashboard' if session['user_type'] == 'student' else 'lecturer_dashboard') }}" class="btn btn-primary btn-lg me-3">Go to Dashboard</a>
+                <a href="#" onclick="confirmLogout()" class="btn btn-outline-primary btn-lg">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg me-3">Login</a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg">Register</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+             alt="Face Recognition" class="img-fluid rounded shadow">
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Automated Attendance</h5>
+                <p class="card-text">No manual intervention required for marking attendance</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Secure System</h5>
+                <p class="card-text">Prevents alteration of attendance records</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Easy Reporting</h5>
+                <p class="card-text">Lecturers can view and manage attendance records</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

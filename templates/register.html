@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Register for DUT Attendance System</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">I am a:</label>
+                        <select class="form-select" id="user_type" name="user_type" required>
+                            <option value="student">Student</option>
+                            <option value="lecturer">Lecturer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="surname" class="form-label">Surname</label>
+                                <input type="text" class="form-control" id="surname" name="surname" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="form-text">
+                            For students: 8 digits followed by @dut4life.ac.za (e.g., 22446688@dut4life.ac.za)<br>
+                            For lecturers: your name followed by @dut.ac.za (e.g., qrobyn@dut.ac.za)
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="face_image" class="form-label">Face Image (for attendance)</label>
+                        <input type="file" class="form-control" id="face_image" name="face_image" accept="image/*" required>
+                        <div class="form-text">Please upload a clear front-facing photo of your face for attendance verification.</div>
+                    </div>
+                    
+                    <div id="student-fields">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="course" class="form-label">Course</label>
+                                    <input type="text" class="form-control" id="course" name="course">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="Faculty" class="form-label">Faculty</label>
+                                    <select class="form-select" id="Faculty" name="Faculty">
+                                        <option value="">Select Faculty</option>
+                                        <option value="Accounting and Informatics">Accounting and Informatics</option>
+                                        <option value="Applied Sciences">Applied Sciences</option>
+                                        <option value="Arts and Design">Arts and Design</option>
+                                        <option value="Engineering and the Built Environment">Engineering and the Built Environment</option>
+                                        <option value="Health Sciences">Health Sciences</option>
+                                        <option value="Management Sciences">Management Sciences</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="lecturer-fields" style="display: none;">
+                        <div class="mb-3">
+                            <label for="lecturer_Faculty" class="form-label">Faculty</label>
+                            <select class="form-select" id="lecturer_Faculty" name="Faculty">
+                                <option value="">Select Faculty</option>
+                                <option value="Accounting and Informatics">Accounting and Informatics</option>
+                                <option value="Applied Sciences">Applied Sciences</option>
+                                <option value="Arts and Design">Arts and Design</option>
+                                <option value="Engineering and the Built Environment">Engineering and the Built Environment</option>
+                                <option value="Health Sciences">Health Sciences</option>
+                                <option value="Management Sciences">Management Sciences</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <div class="mt-3 text-center">
+                    Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('user_type').addEventListener('change', function() {
+        if (this.value === 'student') {
+            document.getElementById('student-fields').style.display = 'block';
+            document.getElementById('lecturer-fields').style.display = 'none';
+        } else {
+            document.getElementById('student-fields').style.display = 'none';
+            document.getElementById('lecturer-fields').style.display = 'block';
+        }
+    });
+</script>
+{% endblock %}

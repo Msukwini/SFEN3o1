@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Student Dashboard</h2>
+
+{% if modules %}
+    <div class="row">
+        {% for module in modules %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">{{ module.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>Code:</strong> {{ module.code }}</p>
+                        <p class="card-text"><strong>Faculty:</strong> {{ module.Faculty }}</p>
+                        
+                        {% if module.total_sessions > 0 %}
+                            {% set attendance_percentage = (module.attended_sessions / module.total_sessions) * 100 %}
+                            <div class="mt-3">
+                                <p class="mb-1">Attendance: {{ module.attended_sessions }}/{{ module.total_sessions }} sessions</p>
+                                <div class="progress">
+                                    <div class="progress-bar {% if attendance_percentage >= 80 %}bg-success{% elif attendance_percentage >= 60 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         role="progressbar" style="width: {{ attendance_percentage }}%" 
+                                         aria-valuenow="{{ attendance_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                        {{ attendance_percentage|round(1) }}%
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">No sessions scheduled yet</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ url_for('student_module', module_id=module.id) }}" class="btn btn-outline-primary btn-sm">View Module</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        You are not enrolled in any modules yet. Please ask your lecturer to add you to a module.
+    </div>
+{% endif %}
+{% endblock %}

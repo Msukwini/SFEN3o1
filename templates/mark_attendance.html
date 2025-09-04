@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Mark Attendance with Face Recognition</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <p>Please allow camera access and position your face in the frame.</p>
+                    <div id="camera-container" class="mb-3">
+                        <video id="video" width="400" height="300" autoplay></video>
+                        <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+                    </div>
+                    <button id="capture-btn" class="btn btn-primary">Capture & Verify</button>
+                </div>
+                
+                <div id="result-message" class="alert alert-info" style="display:none;"></div>
+                
+                <div class="text-center">
+                    <a href="{{ url_for('student_module', module_id=module_id) }}" class="btn btn-secondary">Back to Module</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    const resultMessage = document.getElementById('result-message');
+    let stream = null;
+    
+    // Access camera
+    async function startCamera() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    width: { ideal: 400 },
+                    height: { ideal: 300 }
+                },
+                audio: false 
+            });
+            video.srcObject = stream;
+            captureBtn.disabled = false;
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            resultMessage.textContent = 'Error accessing camera: ' + error.message;
+            resultMessage.className = 'alert alert-danger';
+            resultMessage.style.display = 'block';
+            captureBtn.disabled = true;
+        }
+    }
+    
+    // Stop camera
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    }
+    
+    // Capture image
+    captureBtn.addEventListener('click', function() {
+        // Disable button to prevent multiple clicks
+        captureBtn.disabled = true;
+        resultMessage.textContent = 'Processing...';
+        resultMessage.className = 'alert alert-info';
+        resultMessage.style.display = 'block';
+        
+        // Draw video frame to canvas
+        const context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0, 400, 300);
+        
+        // Convert to blob and send to server
+        canvas.toBlob(function(blob) {
+            const formData = new FormData();
+            formData.append('face_image', blob, 'face.jpg');
+            
+            fetch("{{ url_for('process_attendance', module_id=module_id, session_id=session_id) }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultMessage.textContent = data.message;
+                    resultMessage.className = 'alert alert-success';
+                    
+                    // Stop camera
+                    stopCamera();
+                    
+                    // Redirect after 2 seconds
+                    setTimeout(function() {
+                        window.location.href = "{{ url_for('student_module', module_id=module_id) }}";
+                    }, 2000);
+                } else {
+                    resultMessage.textContent = data.message;
+                    resultMessage.className = 'alert alert-danger';
+                    captureBtn.disabled = false; // Re-enable button
+                }
+                resultMessage.style.display = 'block';
+            })
+            .catch(error => {
+                resultMessage.textContent = 'Error: ' + error.message;
+                resultMessage.className = 'alert alert-danger';
+                resultMessage.style.display = 'block';
+                captureBtn.disabled = false; // Re-enable button
+            });
+        }, 'image/jpeg', 0.95);
+    });
+    
+    // Start camera when page loads
+    startCamera();
+    
+    // Clean up camera when leaving page
+    window.addEventListener('beforeunload', function() {
+        stopCamera();
+    });
+});
+</script>
+{% endblock %}

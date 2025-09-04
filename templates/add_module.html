@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add New Module</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Module Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="code" class="form-label">Module Code</label>
+                        <input type="text" class="form-control" id="code" name="code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Faculty" class="form-label">Faculty</label>
+                        <select class="form-select" id="Faculty" name="Faculty" required>
+                            <option value="">Select Faculty</option>
+                            <option value="Accounting and Informatics">Accounting and Informatics</option>
+                            <option value="Applied Sciences">Applied Sciences</option>
+                            <option value="Arts and Design">Arts and Design</option>
+                            <option value="Engineering and the Built Environment">Engineering and the Built Environment</option>
+                            <option value="Health Sciences">Health Sciences</option>
+                            <option value="Management Sciences">Management Sciences</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Module</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

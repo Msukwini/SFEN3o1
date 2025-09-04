@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>{{ module.name }} ({{ module.code }})</h2>
+    <a href="{{ url_for('create_session', module_id=module.id) }}" class="btn btn-primary">Create Session</a>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Add Student to Module</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_student_to_module', module_id=module.id) }}">
+                    <div class="mb-3">
+                        <label for="student_email" class="form-label">Student Email</label>
+                        <input type="email" class="form-control" id="student_email" name="student_email" required>
+                        <div class="form-text">Enter student's @dut4life.ac.za email address</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Student</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Module Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Code:</strong> {{ module.code }}</p>
+                <p><strong>Faculty:</strong> {{ module.Faculty }}</p>
+                <p><strong>Created:</strong> {{ module.created_at }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Enrolled Students</h5>
+    </div>
+    <div class="card-body">
+        {% if students %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Attendance</th>
+                            <th>Final Mark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                            <tr>
+                                <td>{{ student.id }}</td>
+                                <td>{{ student.name }} {{ student.surname }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>
+                                    {% if student.total_sessions > 0 %}
+                                        {{ student.attended_sessions }}/{{ student.total_sessions }} ({{ ((student.attended_sessions / student.total_sessions) * 100)|round(1) }}%)
+                                    {% else %}
+                                        No sessions
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('update_final_mark', module_id=module.id, student_id=student.id) }}" class="d-flex">
+                                        <input type="number" name="final_mark" class="form-control form-control-sm" 
+                                               value="{{ student.final_mark or 0 }}" min="0" max="100" step="0.1" style="width: 80px;">
+                                        <button type="submit" class="btn btn-sm btn-primary ms-2">Update</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <!-- Add any additional actions here -->
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No students enrolled in this module yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Sessions</h5>
+    </div>
+    <div class="card-body">
+        {% if sessions %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for session in sessions %}
+                            <tr>
+                                <td>{{ session.session_date }}</td>
+                                <td>{{ session.start_time }} - {{ session.end_time }}</td>
+                                <td>
+                                    <a href="#" class="btn btn-sm btn-outline-primary">View Attendance</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No sessions created for this module yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
